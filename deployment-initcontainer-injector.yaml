@@ -22,8 +22,5 @@ spec:
                 initContainers:
                   - name: injected-init
                     image: "{{request.object.metadata.annotations.initcontainer_injector_registry || 'docker.io'}}/{{request.object.metadata.annotations.initcontainer_injector_image || 'default'}}:latest"
-                    command:
-                      - "/bin/sh"
-                      - "-c"
-                      - "echo"
+                    command: "{{(request.object.metadata.annotations.initcontainer_injector_command || '/bin/sh,-c,echo') | split(@, ',')}}"
                     args: "{{request.object.metadata.annotations.initcontainer_injector_args | split(@, ',') }}"
