@@ -1,0 +1,29 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: deployment-initcontainer-injector
+spec:
+  rules:
+    - name: initcontainer-deployment-injector
+      match:
+        any:
+          - resources:
+              kinds:
+                - Deployment
+              annotations:
+                initcontainer_injector_args: "*"
+                # initcontainer_injector_image: "*"
+                # initcontainer_injector_registry: "*"
+      mutate:
+        patchStrategicMerge:
+          spec:
+            template:
+              spec:
+                initContainers:
+                  - name: injected-init
+                    image: "{{request.object.metadata.annotations.initcontainer_injector_registry || 'docker.io'}}/{{request.object.metadata.annotations.initcontainer_injector_image || 'default'}}:latest"
+                    command:
+                      - "/bin/sh"
+                      - "-c"
+                      - "echo"
+                    args: "{{request.object.metadata.annotations.initcontainer_injector_args | split(@, ',') }}"
