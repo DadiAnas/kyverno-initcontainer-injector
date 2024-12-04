@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deployment-with-init-inject-annotation
+  name: deployment-with-init-inject-annotation-example
   namespace: default
   annotations:
     initcontainer_injector_args: "-u,dep1,-u,dep2,-m,3600"
@@ -9,7 +9,7 @@ metadata:
     initcontainer_injector_registry: ""
     initcontainer_injector_command: "/bin/sh,-c,echo"
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: dependencies-app
