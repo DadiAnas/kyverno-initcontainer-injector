@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dynamic-dependencies-deployment
+  namespace: default
+  annotations:
+    dependencies: "dep1,dep2,dep3"
+    initcontainer_injector_args: "-u,dep1,-u,dep2,-m,3600"
+    initcontainer_injector_image: "nginx"
+    initcontainer_injector_registry: ""
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dependencies-app
+  template:
+    metadata:
+      labels:
+        app: dependencies-app
+    spec:
+      containers:
+        - name: main-app
+          image: nginx
+          ports:
+            - containerPort: 80
